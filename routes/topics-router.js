@@ -3,5 +3,5 @@ const { getTopics, getArticlesByTopic } = require("../controllers");
 
 router.route("/").get(getTopics);
 
-router.route("/:belongs_to/articles").get(getArticlesByTopic);
+router.route("/:topic/articles").get(getArticlesByTopic);
 module.exports = router;

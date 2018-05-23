@@ -1,7 +1,13 @@
 const router = require("express").Router();
-const { getArticles, getCommentsForArticle } = require("../controllers");
+const {
+  getArticles,
+  getCommentsByArticle,
+  getArticleById
+} = require("../controllers");
 
 router.route("/").get(getArticles);
 
-// router.route("/:article_id/comments").get(getCommentsForArticle);
+router.route("/:article_id/comments").get(getCommentsByArticle);
+
+router.route("/:article_id").get(getArticleById);
 module.exports = router;

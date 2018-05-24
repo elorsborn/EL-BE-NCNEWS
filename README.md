@@ -50,19 +50,19 @@ Data has been provided for both testing and development environments so you will
 ### Routes
 
 ```http
-GET /api
+GET /api DONE
 ```
 
 Serves an HTML page with documentation for all the available endpoints
 
 ```http
-GET /api/topics
+GET /api/topics DONE
 ```
 
 Get all the topics
 
 ```http
-GET /api/topics/:topic/articles
+GET /api/topics/:topic/articles DONE
 ```
 
 Return all the articles for a certain topic
@@ -75,19 +75,19 @@ Add a new article to a topic. This route requires a JSON body with title and bod
 e.g: `{ "title": "this is my new article title", "body": "This is my new article content"}`
 
 ```http
-GET /api/articles
+GET /api/articles DONE
 ```
 
 Returns all the articles
 
 ```http
-GET /api/articles/:article_id
+GET /api/articles/:article_id DONE
 ```
 
 Get an individual article
 
 ```http
-GET /api/articles/:article_id/comments
+GET /api/articles/:article_id/comments DONE
 ```
 
 Get all the comments for a individual article
@@ -100,27 +100,27 @@ Add a new comment to an article. This route requires a JSON body with a comment 
 e.g: `{"comment": "This is my new comment"}`
 
 ```http
-PUT /api/articles/:article_id
+PUT /api/articles/:article_id DONE
 ```
 
 Increment or Decrement the votes of an article by one. This route requires a vote query of 'up' or 'down'
 e.g: `/api/articles/:article_id?vote=up`
 
 ```http
-PUT /api/comments/:comment_id
+PUT /api/comments/:comment_id DONE
 ```
 
 Increment or Decrement the votes of a comment by one. This route requires a vote query of 'up' or 'down'
 e.g: `/api/comments/:comment_id?vote=down`
 
 ```http
-DELETE /api/comments/:comment_id
+DELETE /api/comments/:comment_id DONE
 ```
 
 Deletes a comment
 
 ```http
-GET /api/users/:username
+GET /api/users/:username DONE
 ```
 
 Returns a JSON object with the profile data for the specified user.

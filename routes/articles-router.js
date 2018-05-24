@@ -2,12 +2,19 @@ const router = require("express").Router();
 const {
   getArticles,
   getCommentsByArticle,
-  getArticleById
+  getArticleById,
+  voteOnArticle,
+  addCommentToArticle
 } = require("../controllers");
 
 router.route("/").get(getArticles);
+router
+  .route("/:article_id")
+  .get(getArticleById)
+  .put(voteOnArticle);
+router
+  .route("/:article_id/comments")
+  .get(getCommentsByArticle)
+  .post(addCommentToArticle);
 
-router.route("/:article_id/comments").get(getCommentsByArticle);
-
-router.route("/:article_id").get(getArticleById);
 module.exports = router;

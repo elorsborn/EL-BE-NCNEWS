@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Topic, User, Article, Comment } = require("../models");
+const { commentCount, articleCommentCount } = require("../utils");
 
 // =============== TOPIC CONTROLLERS ===============
 exports.getTopics = (req, res, next) => {
@@ -20,17 +21,40 @@ exports.getArticlesByTopic = (req, res, next) => {
 };
 
 exports.addArticleToTopic = (req, res, next) => {
-  const { topic_id } = req.params;
-  const newArticle = new Article({});
+  const newArticle = new Article({
+    ...req.body,
+    belongs_to: req.params.topic,
+    created_by: "5b0694259ebb7a16eaf08362" //grumpy19
+  });
+  return (
+    Article.create(newArticle)
+      //populate this with username
+      .then(article => {
+        res.send({ article });
+      })
+      .catch(console.log)
+  );
 };
 
 // =============== ARTICLE CONTROLLERS ===============
 exports.getArticles = (req, res, next) => {
   Article.find()
+    .lean()
     .then(articles => {
-      res.send({ articles });
+      return Promise.all([
+        articles,
+        ...articles.map(articleObj =>
+          Comment.count({ belongs_to: articleObj._id })
+        )
+      ]);
     })
-    .catch(next);
+    .then(([articles, ...commentCounts]) => {
+      let result = articles.map((articleObj, index) => {
+        articleObj.comments = commentCounts[index];
+        return articleObj;
+      });
+      res.send({ articles: result });
+    });
 };
 
 exports.getArticleById = (req, res, next) => {
@@ -48,7 +72,16 @@ exports.getCommentsByArticle = (req, res, next) => {
 };
 
 exports.addCommentToArticle = (req, res, next) => {
-  const { article_id } = req.params;
+  const newComment = new Comment({
+    ...req.body,
+    belongs_to: req.params.article_id,
+    created_by: "5b0694259ebb7a16eaf08362" // grumpy19
+  });
+  return Comment.create(newComment)
+    .then(comment => {
+      res.send({ comment });
+    })
+    .catch(console.log);
 };
 
 exports.voteOnArticle = (req, res, next) => {
@@ -87,6 +120,6 @@ exports.voteOnComment = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   return Comment.findByIdAndRemove(req.params.comment_id).then(commentId => {
-    res.send("deleted successfully");
+    res.send("Comment deleted");
   });
 };

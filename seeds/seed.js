@@ -26,14 +26,17 @@ module.exports = seedDB = () => {
     .then(([topicDocs, userDocs]) => {
       return Promise.all([
         Article.insertMany(formatArticles(articleData, userDocs)),
+        topicDocs,
         userDocs
       ]);
     })
-    .then(([articleDocs, userDocs]) => {
-      return Comment.insertMany(
-        formatComments(commentData, articleDocs, userDocs)
-      );
+    .then(([articleDocs, topicDocs, userDocs]) => {
+      return Promise.all([
+        Comment.insertMany(formatComments(commentData, articleDocs, userDocs)),
+        articleDocs,
+        topicDocs,
+        userDocs
+      ]);
     })
-    .then(commentDocs => commentDocs)
     .catch(console.log);
 };

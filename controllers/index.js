@@ -14,6 +14,7 @@ exports.getTopics = (req, res, next) => {
 exports.getArticlesByTopic = (req, res, next) => {
   const { topic } = req.params;
   Article.find({ belongs_to: topic })
+    .populate("created_by", "username")
     .then(articles => {
       if (articles.length === 0) return next({ status: 404 });
       res.send({ articles });
@@ -41,6 +42,7 @@ exports.addArticleToTopic = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   Article.find()
     .lean()
+    .populate("created_by", "username")
     .then(articles => {
       return Promise.all([
         articles,
@@ -59,13 +61,15 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getArticleById = (req, res, next) => {
-  Article.findById(req.params.article_id).then(article =>
-    res.send({ article })
-  );
+  Article.findById(req.params.article_id)
+    .populate("created_by", "username")
+    .then(article => res.send({ article }));
 };
+
 exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
   Comment.find({ belongs_to: article_id })
+    .populate("created_by", "username")
     .then(comments => {
       res.send({ comments });
     })
@@ -101,9 +105,10 @@ exports.voteOnArticle = (req, res, next) => {
 exports.getUser = (req, res, next) => {
   User.find({ username: req.params.username })
     .then(user => {
-      res.send(user);
+      res.send({ user });
     })
     .catch(console.log);
+  // ************** REFACTOR *************** : no need for an array, will have to change test accordingly
 };
 // =============== COMMENT CONTROLLERS ===============
 

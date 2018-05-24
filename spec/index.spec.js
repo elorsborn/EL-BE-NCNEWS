@@ -8,7 +8,7 @@ describe("northcoders-news-test", () => {
   let topics, users, articles, comments;
   beforeEach(() => {
     return seedDB().then(docs => {
-      [topics, users, articles, comments] = docs;
+      [comments, articles, topics, users] = docs;
     });
   });
   after(() => {
@@ -35,7 +35,7 @@ describe("northcoders-news-test", () => {
           );
         });
     });
-    it("GET /:topic/articles should redirect to error page if topic does not exist", () => {
+    it("GET /:topic/articles returns 404 should redirect to error page if topic does not exist", () => {
       return request
         .get("/api/topics/dogs/articles")
         .expect(404)
@@ -43,18 +43,118 @@ describe("northcoders-news-test", () => {
           expect(res.body.msg).to.equal("Page Not Found");
         });
     });
-    it("POST /:topic/articles should enable a user to post a new article for a specific topic", () => {
+    it("POST /:topic/articles should enable a user to post an article on a specific topic", () => {
       return request
         .post("/api/topics/cats/articles")
-        .send({ title: "Cats suck. Dogs rule.", body: "Nuff said" })
+        .send({ title: "Cats are lame. Dogs rule.", body: "Nuff said" })
         .expect(201)
         .then(res => {
-          expect(res.body.article.title).to.equal("Cats suck. Dogs rule.");
+          expect(res.body.article.title).to.equal("Cats are lame. Dogs rule.");
           expect(res.body.article.body).to.equal("Nuff said");
           return request.get("/api/topics/cats/articles");
         })
         .then(res => {
           expect(res.body.articles.length).to.equal(3);
+        });
+    });
+  });
+  describe("/articles", () => {
+    it("GET returns 200 and an array of articles", () => {
+      return request
+        .get("/api/articles")
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles.length).to.equal(4);
+          expect(res.body.articles[0].title).to.equal(
+            "Living in the shadow of a great man"
+          );
+        });
+    });
+    it("GET /:article_id returns a specific article corresponding to its ID", () => {
+      return request
+        .get(`/api/articles/${articles[0]._id}`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.article.body).to.equal(
+            "I find this existence challenging"
+          );
+        });
+    });
+    it("PUT /:article_id enables voting on an article", () => {
+      return request
+        .put(`/api/articles/${articles[2]._id}?vote=down`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.article.title).to.equal(
+            "They're not exactly dogs, are they?"
+          );
+          expect(res.body.article.votes).to.equal(-1);
+        });
+    });
+    it("GET /:article_id/comments gets all the comments on an article", () => {
+      return request
+        .get(`/api/articles/${articles[3]._id}/comments`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.comments.length).to.equal(2);
+          expect(res.body.comments[0].body).to.equal(
+            "What do you see? I have no idea where this will lead us. This place I speak of, is known as the Black Lodge."
+          );
+        });
+    });
+    it("POST should allow user to post a comment on a specific article", () => {
+      return request
+        .post(`/api/articles/${articles[1]._id}/comments`)
+        .send({
+          body: "Mitch counted to infinity. Twice.",
+          created_by: `{ username: "dedekind561" }`
+        })
+        .expect(201)
+        .then(res => {
+          expect(res.body.comment.body).to.equal(
+            "Mitch counted to infinity. Twice."
+          );
+          return request.get(`/api/articles/${articles[1]._id}/comments`);
+        })
+        .then(res => {
+          expect(res.body.comments.length).to.equal(3);
+        });
+    });
+  });
+  describe("/users", () => {
+    it("GET /api/users/:username returns 200 and return the user", () => {
+      return request
+        .get(`/api/users/${users[0].username}`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.user[0].username).to.equal("butter_bridge");
+        });
+    });
+  });
+  describe("/comments", () => {
+    it("PUT /:comment_id enables voting on a comment", () => {
+      return request
+        .put(`/api/comments/${comments[7]._id}?vote=up`)
+        .expect(200)
+        .then(res => {
+          console.log(res.body);
+          expect(res.body.comment.body).to.equal(
+            "I am 100% sure that we're not completely sure."
+          );
+          expect(res.body.comment.votes).to.equal(2);
+        });
+    });
+    it("DELETE /:comment_id enables the deletion of a user's comment", () => {
+      // **********************
+
+      // much to do young padwan - finish this then sort the posts and then add error handling
+
+      // ***********************
+      return request
+        .delete(`/api/comments/${comments[0]._id}`)
+        .expect(200)
+        .then(res => {
+          console.log(res.body);
         });
     });
   });

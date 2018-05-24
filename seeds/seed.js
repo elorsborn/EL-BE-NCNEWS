@@ -15,7 +15,7 @@ const userData = require(`./${data}/users.json`);
 
 //REFACTOR THE ABOVE
 
-exports.seedDB = () => {
+module.exports = seedDB = () => {
   return Promise.all([
     Topic.insertMany(formatTopics(topicData)),
     User.insertMany(formatUsers(userData))

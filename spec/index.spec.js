@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const mongoose = require("mongoose");
 const seedDB = require("../seeds/seed.js");
 const testData = require("../seeds/testData");
-const superagent = require("superagent")(app);
+const request = require("supertest")(app);
 
 describe("NORTHCODERS NEWS", () => {
   let topics, users, articles, comments;
@@ -21,6 +21,7 @@ describe("NORTHCODERS NEWS", () => {
         .get("/topics")
         .expect(200)
         .then(res => {
+          console.log(res.body);
           expect(res.body.topics.length).to.equal();
         });
     });

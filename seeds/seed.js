@@ -14,11 +14,15 @@ const userData = require(`./${data}/users.json`);
 
 //REFACTOR THE ABOVE
 
-exports.seedDB = () => {
-  return Promise.all([
-    Topic.insertMany(formatTopics(topicData)),
-    User.insertMany(formatUsers(userData))
-  ])
+module.exports = seedDB = () => {
+  return mongoose.connection
+    .dropDatabase()
+    .then(() => {
+      return Promise.all([
+        Topic.insertMany(formatTopics(topicData)),
+        User.insertMany(formatUsers(userData))
+      ]);
+    })
     .then(([topicDocs, userDocs]) => {
       return Promise.all([
         Article.insertMany(formatArticles(articleData, userDocs)),

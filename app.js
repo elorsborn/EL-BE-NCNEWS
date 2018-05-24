@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use("/api", apiRouter);
 
 app.get("/*", (req, res, next) => {
-  next({ msg: "Page not found, sucka!", status: 404 });
+  next({ msg: "No such page exists!", status: 404 });
 });
 
 app.use((err, req, res, next) => {

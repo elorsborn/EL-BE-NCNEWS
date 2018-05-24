@@ -15,6 +15,7 @@ exports.getArticlesByTopic = (req, res, next) => {
   const { topic } = req.params;
   Article.find({ belongs_to: topic })
     .then(articles => {
+      if (articles.length === 0) return next({ status: 404 });
       res.send({ articles });
     })
     .catch(next);
@@ -30,7 +31,7 @@ exports.addArticleToTopic = (req, res, next) => {
     Article.create(newArticle)
       //populate this with username
       .then(article => {
-        res.send({ article });
+        res.status(201).send({ article });
       })
       .catch(console.log)
   );
@@ -79,7 +80,7 @@ exports.addCommentToArticle = (req, res, next) => {
   });
   return Comment.create(newComment)
     .then(comment => {
-      res.send({ comment });
+      res.status(201).send({ comment });
     })
     .catch(console.log);
 };

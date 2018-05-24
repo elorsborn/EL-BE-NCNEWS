@@ -5,8 +5,7 @@ const {
   formatTopics,
   formatUsers,
   formatArticles,
-  formatComments,
-  refFunc
+  formatComments
 } = require("../utils");
 const articleData = require(`./${data}/articles.json`);
 const commentData = require(`./${data}/comments.json`);
@@ -15,7 +14,7 @@ const userData = require(`./${data}/users.json`);
 
 //REFACTOR THE ABOVE
 
-module.exports = seedDB = () => {
+exports.seedDB = () => {
   return Promise.all([
     Topic.insertMany(formatTopics(topicData)),
     User.insertMany(formatUsers(userData))

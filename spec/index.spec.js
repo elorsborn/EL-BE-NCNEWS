@@ -5,7 +5,7 @@ const seedDB = require("../seeds/seed.js");
 const testData = require("../seeds/testData");
 const request = require("supertest")(app);
 
-describe("NORTHCODERS NEWS", () => {
+describe("northcoders-news-test", () => {
   let topics, users, articles, comments;
   beforeEach(() => {
     return seedDB(testData).then(docs => {

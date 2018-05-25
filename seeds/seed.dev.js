@@ -1,4 +1,3 @@
-process.env.NODE_ENV = "dev";
 const mongoose = require("mongoose");
 const seedDB = require("./seed");
 const { DB_URL } = require("../config");

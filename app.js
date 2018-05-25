@@ -2,6 +2,7 @@ const app = require("express")();
 const { DB_URL } =
   process.env.NODE_ENV === "production" ? process.env : require("./config");
 const mongoose = require("mongoose");
+const express = require("express");
 const bodyParser = require("body-parser");
 const apiRouter = require("./routes/api-router");
 
@@ -10,7 +11,13 @@ mongoose.connect(DB_URL).then(() => {
 });
 
 app.use(bodyParser.json());
+app.use(express.static("public"));
+
 app.use("/api", apiRouter);
+
+app.get("/", (req, res, next) => {
+  res.render("index.html");
+});
 
 app.get("/*", (req, res, next) => {
   next({ status: 404 });

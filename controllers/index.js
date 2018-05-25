@@ -14,10 +14,23 @@ exports.getTopics = (req, res, next) => {
 exports.getArticlesByTopic = (req, res, next) => {
   const { belongs_to } = req.params;
   Article.find({ belongs_to })
+    .lean()
     .populate("created_by", "username")
     .then(articles => {
       if (articles.length === 0) return next({ status: 404 });
-      res.send({ articles });
+      return Promise.all([
+        articles,
+        ...articles.map(articleObj =>
+          Comment.count({ belongs_to: articleObj._id })
+        )
+      ]);
+    })
+    .then(([articles, ...commentCounts]) => {
+      let result = articles.map((articleObj, index) => {
+        articleObj.comments = commentCounts[index];
+        return articleObj;
+      });
+      res.send({ articles: result });
     })
     .catch(next);
 };

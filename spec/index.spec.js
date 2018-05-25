@@ -23,6 +23,14 @@ describe("northcoders-news-test", () => {
           expect(res.body.msg).to.equal("WELCOME TO NORTHCODERS NEWS");
         });
     });
+    it("GET returns 404 if user types non-existing page on api route", () => {
+      return request
+        .get("/api/random")
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).to.equal("Page Not Found");
+        });
+    });
   });
   describe("/topics", () => {
     it("GET returns 200 and an array of topics", () => {
@@ -34,7 +42,7 @@ describe("northcoders-news-test", () => {
           expect(res.body.topics[0].title).to.equal("Mitch");
         });
     });
-    it("GET /:topic/articles should return all articles corresponding to that topic", () => {
+    it("GET /:topic/articles returns 200 and returns all articles corresponding to that topic", () => {
       return request
         .get(`/api/topics/cats/articles`)
         .expect(200)
@@ -53,7 +61,7 @@ describe("northcoders-news-test", () => {
           expect(res.body.msg).to.equal("Page Not Found");
         });
     });
-    it("POST /:topic/articles should enable a user to post an article on a specific topic", () => {
+    it("POST /:topic/articles returns 201 and enables the posting of an article on a specific topic", () => {
       return request
         .post("/api/topics/cats/articles")
         .send({ title: "Cats are lame. Dogs rule.", body: "Nuff said" })
@@ -93,7 +101,7 @@ describe("northcoders-news-test", () => {
           );
         });
     });
-    it("GET /:article_id returns a specific article corresponding to its ID", () => {
+    it("GET /:article_id returns 200 and returns a specific article corresponding to its ID", () => {
       return request
         .get(`/api/articles/${articles[0]._id}`)
         .expect(200)
@@ -103,7 +111,15 @@ describe("northcoders-news-test", () => {
           );
         });
     });
-    it("PUT /:article_id enables voting on an article", () => {
+    it("GET /:article_id returns 404 and error message when invalid article_id is inputted", () => {
+      return request
+        .get(`/api/articles/${articles[0]._id} + '10'`)
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).to.equal("Page Not Found");
+        });
+    });
+    it("PUT /:article_id returns 200 and enables voting on an article", () => {
       return request
         .put(`/api/articles/${articles[2]._id}?vote=down`)
         .expect(200)
@@ -114,7 +130,7 @@ describe("northcoders-news-test", () => {
           expect(res.body.article.votes).to.equal(-1);
         });
     });
-    it("GET /:article_id/comments gets all the comments on an article", () => {
+    it("GET /:article_id/comments returns 200 and gets all the comments on an article", () => {
       return request
         .get(`/api/articles/${articles[3]._id}/comments`)
         .expect(200)
@@ -125,7 +141,15 @@ describe("northcoders-news-test", () => {
           );
         });
     });
-    it("POST should allow user to post a comment on a specific article", () => {
+    it("GET /:article_id/comments returns 404 and error message if invalid article_ID is inputted", () => {
+      return request
+        .get(`/api/articles/${articles[3]._id} + '1' /comments`)
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).to.equal("Page Not Found");
+        });
+    });
+    it("POST returns 201 and allows the posting of a comment on a specific article", () => {
       return request
         .post(`/api/articles/${articles[1]._id}/comments`)
         .send({
@@ -152,12 +176,20 @@ describe("northcoders-news-test", () => {
         .get(`/api/users/${users[0].username}`)
         .expect(200)
         .then(res => {
-          expect(res.body.user[0].username).to.equal("butter_bridge");
+          expect(res.body.user.username).to.equal("butter_bridge");
+        });
+    });
+    it("GET /api/users/:username returns 404 and error message if invalid username is inputted", () => {
+      return request
+        .get(`/api/users/${users[0].username}` + "a")
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).to.equal("Page Not Found");
         });
     });
   });
   describe("/comments", () => {
-    it("PUT /:comment_id enables voting on a comment", () => {
+    it("PUT /:comment_id returns 200 and enables voting on a comment", () => {
       return request
         .put(`/api/comments/${comments[7]._id}?vote=up`)
         .expect(200)
@@ -168,7 +200,7 @@ describe("northcoders-news-test", () => {
           expect(res.body.comment.votes).to.equal(2);
         });
     });
-    it("DELETE /:comment_id enables the deletion of a user's comment", () => {
+    it("DELETE /:comment_id returns 200 and enables the deletion of a user's comment", () => {
       return request
         .delete(`/api/comments/${comments[0]._id}`)
         .expect(200)

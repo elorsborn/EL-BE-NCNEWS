@@ -64,13 +64,18 @@ exports.getArticles = (req, res, next) => {
         return articleObj;
       });
       res.send({ articles: result });
-    });
+    })
+    .catch(next);
 };
 
 exports.getArticleById = (req, res, next) => {
   Article.findById(req.params.article_id)
     .populate("created_by", "username")
-    .then(article => res.send({ article }));
+    .then(article => res.send({ article }))
+    .catch(err => {
+      if (err.name === "CastError") return next({ status: 404 });
+      next(err);
+    });
 };
 
 exports.getCommentsByArticle = (req, res, next) => {
@@ -80,7 +85,10 @@ exports.getCommentsByArticle = (req, res, next) => {
     .then(comments => {
       res.send({ comments });
     })
-    .catch(next);
+    .catch(err => {
+      if (err.name === "CastError") return next({ status: 404 });
+      next(err);
+    });
 };
 
 exports.addCommentToArticle = (req, res, next) => {
@@ -118,8 +126,9 @@ exports.voteOnArticle = (req, res, next) => {
 
 // =============== USER CONTROLLERS ===============
 exports.getUser = (req, res, next) => {
-  User.find({ username: req.params.username })
+  return User.findOne({ username: req.params.username })
     .then(user => {
+      if (user === null) return next({ status: 404 });
       res.send({ user });
     })
     .catch(next);

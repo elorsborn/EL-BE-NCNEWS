@@ -9,7 +9,7 @@ const {
 router.route("/").get(getTopics);
 
 router
-  .route("/:topic/articles")
+  .route("/:belongs_to/articles")
   .get(getArticlesByTopic)
   .post(addArticleToTopic);
 module.exports = router;

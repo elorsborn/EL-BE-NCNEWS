@@ -13,7 +13,7 @@ router
   .get(getArticleById)
   .put(voteOnArticle);
 router
-  .route("/:article_id/comments")
+  .route("/:belongs_to/comments")
   .get(getCommentsByArticle)
   .post(addCommentToArticle);
 

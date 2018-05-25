@@ -12,8 +12,8 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticlesByTopic = (req, res, next) => {
-  const { topic } = req.params;
-  Article.find({ belongs_to: topic })
+  const { belongs_to } = req.params;
+  Article.find({ belongs_to })
     .populate("created_by", "username")
     .then(articles => {
       if (articles.length === 0) return next({ status: 404 });
@@ -23,19 +23,26 @@ exports.getArticlesByTopic = (req, res, next) => {
 };
 
 exports.addArticleToTopic = (req, res, next) => {
-  const newArticle = new Article({
-    ...req.body,
-    belongs_to: req.params.topic,
-    created_by: "5b0694259ebb7a16eaf08362" //grumpy19
-  });
-  return (
-    Article.create(newArticle)
-      //populate this with username
-      .then(article => {
-        res.status(201).send({ article });
-      })
-      .catch(console.log)
-  );
+  const { title, body } = req.body;
+  const { belongs_to } = req.params;
+  if (body === undefined) return next({ status: 400 });
+  const userPromise = User.findOne();
+  return userPromise
+    .then(user => {
+      return Article.create({
+        title,
+        body,
+        belongs_to,
+        created_by: user._id
+      });
+    })
+    .then(article => {
+      res.status(201).send({ article });
+    })
+    .catch(err => {
+      if (err.name === "ValidationError") return next({ status: 400 });
+      next(err);
+    });
 };
 
 // =============== ARTICLE CONTROLLERS ===============
@@ -67,8 +74,8 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getCommentsByArticle = (req, res, next) => {
-  const { article_id } = req.params;
-  Comment.find({ belongs_to: article_id })
+  const { belongs_to } = req.params;
+  Comment.find({ belongs_to })
     .populate("created_by", "username")
     .then(comments => {
       res.send({ comments });
@@ -77,16 +84,24 @@ exports.getCommentsByArticle = (req, res, next) => {
 };
 
 exports.addCommentToArticle = (req, res, next) => {
-  const newComment = new Comment({
-    ...req.body,
-    belongs_to: req.params.article_id,
-    created_by: "5b0694259ebb7a16eaf08362" // grumpy19
-  });
-  return Comment.create(newComment)
+  const { body } = req.body;
+  const { belongs_to } = req.params;
+  const userPromise = User.findOne();
+  return userPromise
+    .then(user => {
+      return Comment.create({
+        body,
+        belongs_to,
+        created_by: user._id
+      });
+    })
     .then(comment => {
       res.status(201).send({ comment });
     })
-    .catch(console.log);
+    .catch(err => {
+      if (err.name === "ValidationError") return next({ status: 400 });
+      next(err);
+    });
 };
 
 exports.voteOnArticle = (req, res, next) => {
@@ -107,8 +122,7 @@ exports.getUser = (req, res, next) => {
     .then(user => {
       res.send({ user });
     })
-    .catch(console.log);
-  // ************** REFACTOR *************** : no need for an array, will have to change test accordingly
+    .catch(next);
 };
 // =============== COMMENT CONTROLLERS ===============
 
@@ -125,7 +139,9 @@ exports.voteOnComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-  return Comment.findByIdAndRemove(req.params.comment_id).then(commentId => {
-    res.send("Comment deleted");
-  });
+  return Comment.findByIdAndRemove(req.params.comment_id)
+    .then(commentId => {
+      res.send({ msg: "Comment deleted" });
+    })
+    .catch(next);
 };

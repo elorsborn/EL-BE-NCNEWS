@@ -14,6 +14,16 @@ describe("northcoders-news-test", () => {
   after(() => {
     return mongoose.disconnect();
   });
+  describe("/", () => {
+    it("GET returns 200 and the homepage", () => {
+      return request
+        .get("/api")
+        .expect(200)
+        .then(res => {
+          expect(res.body.msg).to.equal("WELCOME TO NORTHCODERS NEWS");
+        });
+    });
+  });
   describe("/topics", () => {
     it("GET returns 200 and an array of topics", () => {
       return request
@@ -26,7 +36,7 @@ describe("northcoders-news-test", () => {
     });
     it("GET /:topic/articles should return all articles corresponding to that topic", () => {
       return request
-        .get("/api/topics/cats/articles")
+        .get(`/api/topics/cats/articles`)
         .expect(200)
         .then(res => {
           expect(res.body.articles.length).to.equal(2);
@@ -54,7 +64,20 @@ describe("northcoders-news-test", () => {
           return request.get("/api/topics/cats/articles");
         })
         .then(res => {
+          expect(res.body.articles[2].created_by.username).to.equal(
+            "butter_bridge"
+          );
           expect(res.body.articles.length).to.equal(3);
+        });
+    });
+    it("POST /:topic/articles returns 400 and error message if user inputs incorrectly", () => {
+      return request
+        .post("/api/topics/cats/articles")
+        .send({ title: "Cats are lame. Dogs rule." })
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.equal("Bad request");
+          return request.get("/api/topics/cats/articles");
         });
     });
   });
@@ -106,8 +129,7 @@ describe("northcoders-news-test", () => {
       return request
         .post(`/api/articles/${articles[1]._id}/comments`)
         .send({
-          body: "Mitch counted to infinity. Twice.",
-          created_by: `{ username: "dedekind561" }`
+          body: "Mitch counted to infinity. Twice."
         })
         .expect(201)
         .then(res => {
@@ -117,12 +139,15 @@ describe("northcoders-news-test", () => {
           return request.get(`/api/articles/${articles[1]._id}/comments`);
         })
         .then(res => {
+          expect(res.body.comments[2].created_by.username).to.equal(
+            "butter_bridge"
+          );
           expect(res.body.comments.length).to.equal(3);
         });
     });
   });
   describe("/users", () => {
-    it("GET /api/users/:username returns 200 and return the user", () => {
+    it("GET /api/users/:username returns 200 and returns the user", () => {
       return request
         .get(`/api/users/${users[0].username}`)
         .expect(200)
@@ -137,7 +162,6 @@ describe("northcoders-news-test", () => {
         .put(`/api/comments/${comments[7]._id}?vote=up`)
         .expect(200)
         .then(res => {
-          console.log(res.body);
           expect(res.body.comment.body).to.equal(
             "I am 100% sure that we're not completely sure."
           );
@@ -145,16 +169,15 @@ describe("northcoders-news-test", () => {
         });
     });
     it("DELETE /:comment_id enables the deletion of a user's comment", () => {
-      // **********************
-
-      // much to do young padwan - finish this then sort the posts and then add error handling
-
-      // ***********************
       return request
         .delete(`/api/comments/${comments[0]._id}`)
         .expect(200)
         .then(res => {
-          console.log(res.body);
+          expect(res.body.msg).to.equal("Comment deleted");
+          return request.get(`/api/articles/${articles[0]._id}/comments`);
+        })
+        .then(res => {
+          expect(res.body.comments.length).to.equal(1);
         });
     });
   });

@@ -5,7 +5,7 @@ const usersRouter = require("./user-router");
 const commentsRouter = require("./comment-router");
 
 router.get("/", (req, res, next) => {
-  res.status(200).send("WELCOME TO NORTHCODERS NEWS");
+  res.status(200).send({ msg: "WELCOME TO NORTHCODERS NEWS" });
 });
 
 router.use("/topics", topicsRouter);

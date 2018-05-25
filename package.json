@@ -5,7 +5,8 @@
   "main": "listen.js",
   "scripts": {
     "test": "NODE_ENV=test mocha ./spec*",
-    "seed:dev": "node ./seeds/seed.dev.js",
+    "seed:dev": "NODE_ENV=dev node ./seeds/seed.dev.js",
+    "seed:production": "NODE_ENV=production node ./seeds/seed.dev.js",
     "start": "node index.js",
     "dev": "npm run seed:dev && nodemon listen.js"
   },

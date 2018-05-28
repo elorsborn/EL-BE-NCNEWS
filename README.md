@@ -31,11 +31,11 @@ The API takes three databases:
 
 3.  The production databse, which can seeded with `npm run seed:prod`.
 
-The server is run using `npm run dev` and can be accessed via your browser or [Postman](https://www.getpostman.com/) at http://localhost:9090/api.
+The server is run using `npm run dev` and can be accessed via your browser or via [Postman](https://www.getpostman.com/) at http://localhost:9090/api.
 
 **Hosting**
 
-Sign up to accounts on both [MLab](https://mlab.com/) and [Heroku](https://www.heroku.com/) and follow instuctions.
+Sign up to accounts on both [MLab](https://mlab.com/) and [Heroku](https://www.heroku.com/) and follow the instructions.
 
 Don't forget to change your config set up!
 
@@ -45,4 +45,4 @@ heroku config:set MONGO_URI=[mlab-url]
 
 **Author and Acknowledgements**
 
-This API was created by Elliot Orsborn with the guidance and tutorship of the Northcoders staff and residents. Big up!
+This API was created by Elliot Orsborn with the guidance and tutorship of the Northcoders staff and residents.

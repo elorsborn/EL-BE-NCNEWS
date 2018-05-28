@@ -169,6 +169,16 @@ describe("northcoders-news-test", () => {
           expect(res.body.comments.length).to.equal(3);
         });
     });
+    it("POST returns 400 and error message if user inputs incorrectly", () => {
+      return request
+        .post(`/api/articles/${articles[1]._id}/comments`)
+        .send({ body: "" })
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.equal("Bad request");
+          return request.get(`/api/articles/${articles[1]._id}/comments`);
+        });
+    });
   });
   describe("/users", () => {
     it("GET /api/users/:username returns 200 and returns the user", () => {

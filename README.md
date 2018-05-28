@@ -45,4 +45,4 @@ heroku config:set MONGO_URI=[mlab-url]
 
 **Author and Acknowledgements**
 
-This API was created by Elliot Orsborn with the guidance and tutorship of the Northcoders staff and residents.
+This API was created by Elliot Orsborn under the guidance and tutelage of the Northcoders staff and residents.

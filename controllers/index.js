@@ -110,14 +110,17 @@ exports.addCommentToArticle = (req, res, next) => {
   const userPromise = User.findOne();
   return userPromise
     .then(user => {
-      return Comment.create({
-        body,
-        belongs_to,
-        created_by: user._id
-      });
+      return Promise.all([
+        Comment.create({
+          body,
+          belongs_to,
+          created_by: user._id
+        }),
+        user
+      ]);
     })
-    .then(comment => {
-      res.status(201).send({ comment });
+    .then(([comment, user]) => {
+      res.status(201).send({ ...comment.toObject(), created_by: user });
     })
     .catch(err => {
       if (err.name === "ValidationError") return next({ status: 400 });

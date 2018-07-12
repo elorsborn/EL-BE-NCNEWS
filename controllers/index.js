@@ -1,6 +1,4 @@
-const mongoose = require("mongoose");
 const { Topic, User, Article, Comment } = require("../models");
-const { commentCount, articleCommentCount } = require("../utils");
 
 // =============== TOPIC CONTROLLERS ===============
 exports.getTopics = (req, res, next) => {

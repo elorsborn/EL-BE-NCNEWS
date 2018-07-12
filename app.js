@@ -10,6 +10,7 @@ const cors = require("cors");
 mongoose.connect(DB_URL).then(() => {
   console.log(`connected to the database...${DB_URL}`);
 });
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static("public"));

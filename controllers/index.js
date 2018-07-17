@@ -32,21 +32,25 @@ exports.getArticlesByTopic = (req, res, next) => {
     })
     .catch(next);
 };
-
+// const { belongs_to } = req.params;
+// const { body, created_by } = req.body;
+// Comment.create({ body, belongs_to, created_by })
+//   .then(comment => {
+//     res.status(201).send({ comment });
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
 exports.addArticleToTopic = (req, res, next) => {
-  const { title, body } = req.body;
+  const { title, body, created_by } = req.body;
   const { belongs_to } = req.params;
   if (body === undefined) return next({ status: 400 });
-  const userPromise = User.findOne();
-  return userPromise
-    .then(user => {
-      return Article.create({
-        title,
-        body,
-        belongs_to,
-        created_by: user._id
-      });
-    })
+  Article.create({
+    title,
+    created_by,
+    body,
+    belongs_to
+  })
     .then(article => {
       res.status(201).send({ article });
     })
@@ -103,22 +107,11 @@ exports.getCommentsByArticle = (req, res, next) => {
 };
 
 exports.addCommentToArticle = (req, res, next) => {
-  const { body } = req.body;
   const { belongs_to } = req.params;
-  const userPromise = User.findOne();
-  return userPromise
-    .then(user => {
-      return Promise.all([
-        Comment.create({
-          body,
-          belongs_to,
-          created_by: user._id
-        }),
-        user
-      ]);
-    })
-    .then(([comment, user]) => {
-      res.status(201).send({ ...comment.toObject(), created_by: user });
+  const { body, created_by } = req.body;
+  Comment.create({ body, belongs_to, created_by })
+    .then(comment => {
+      res.status(201).send({ comment });
     })
     .catch(err => {
       if (err.name === "ValidationError") return next({ status: 400 });

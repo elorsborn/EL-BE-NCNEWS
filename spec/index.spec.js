@@ -64,7 +64,11 @@ describe("northcoders-news-test", () => {
     it("POST /:topic/articles returns 201 and enables the posting of an article on a specific topic", () => {
       return request
         .post("/api/topics/cats/articles")
-        .send({ title: "Cats are lame. Dogs rule.", body: "Nuff said" })
+        .send({
+          title: "Cats are lame. Dogs rule.",
+          body: "Nuff said",
+          created_by: users[0]._id
+        })
         .expect(201)
         .then(res => {
           expect(res.body.article.title).to.equal("Cats are lame. Dogs rule.");
@@ -149,15 +153,18 @@ describe("northcoders-news-test", () => {
           expect(res.body.msg).to.equal("Page Not Found");
         });
     });
-    it.only("POST returns 201 and allows the posting of a comment on a specific article", () => {
+    it("POST returns 201 and allows the posting of a comment on a specific article", () => {
       return request
         .post(`/api/articles/${articles[1]._id}/comments`)
         .send({
-          body: "Mitch counted to infinity. Twice."
+          body: "Mitch counted to infinity. Twice.",
+          created_by: users[0]._id
         })
         .expect(201)
         .then(res => {
-          expect(res.body.body).to.equal("Mitch counted to infinity. Twice.");
+          expect(res.body.comment.body).to.equal(
+            "Mitch counted to infinity. Twice."
+          );
           return request.get(`/api/articles/${articles[1]._id}/comments`);
         })
         .then(res => {
@@ -167,10 +174,10 @@ describe("northcoders-news-test", () => {
           expect(res.body.comments.length).to.equal(3);
         });
     });
-    it("POST returns 400 and error message if user inputs incorrectly", () => {
+    it("POST returns 400 and error message if user inputs incorrectly e.g. empty string", () => {
       return request
         .post(`/api/articles/${articles[1]._id}/comments`)
-        .send({ body: "" })
+        .send({ body: "", created_by: users[0]._id })
         .expect(400)
         .then(res => {
           expect(res.body.msg).to.equal("Bad request");

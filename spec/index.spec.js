@@ -149,7 +149,7 @@ describe("northcoders-news-test", () => {
           expect(res.body.msg).to.equal("Page Not Found");
         });
     });
-    it("POST returns 201 and allows the posting of a comment on a specific article", () => {
+    it.only("POST returns 201 and allows the posting of a comment on a specific article", () => {
       return request
         .post(`/api/articles/${articles[1]._id}/comments`)
         .send({
@@ -157,9 +157,7 @@ describe("northcoders-news-test", () => {
         })
         .expect(201)
         .then(res => {
-          expect(res.body.comment.body).to.equal(
-            "Mitch counted to infinity. Twice."
-          );
+          expect(res.body.body).to.equal("Mitch counted to infinity. Twice.");
           return request.get(`/api/articles/${articles[1]._id}/comments`);
         })
         .then(res => {

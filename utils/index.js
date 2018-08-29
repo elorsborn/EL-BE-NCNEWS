@@ -16,7 +16,6 @@ exports.formatUsers = userData => {
     };
   });
 };
-// ^^^^^^^^^^^^^^^^^^^^ UNECESSARY BUT DONE NOW SO HEY
 
 exports.formatArticles = (articleData, userDocs) => {
   return articleData.map(article => {

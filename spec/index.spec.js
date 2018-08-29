@@ -149,7 +149,7 @@ describe("northcoders-news-test", () => {
           expect(res.body.msg).to.equal("Page Not Found");
         });
     });
-    it.only("POST returns 201 and allows the posting of a comment on a specific article", () => {
+    it("POST returns 201 and allows the posting of a comment on a specific article", () => {
       return request
         .post(`/api/articles/${articles[1]._id}/comments`)
         .send({

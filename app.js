@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const apiRouter = require("./routes/api-router");
 const cors = require("cors");
 
-mongoose.connect(DB_URL).then(() => {
+mongoose.connect(DB_URL, { useNewUrlParser: true }).then(() => {
   console.log(`connected to the database...${DB_URL}`);
 });
 
